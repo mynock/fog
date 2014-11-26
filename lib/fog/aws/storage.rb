@@ -446,10 +446,9 @@ module Fog
         private
 
         def setup_credentials(options)
-          @aws_access_key_id     = options[:aws_access_key_id]
-          @aws_secret_access_key = options[:aws_secret_access_key]
-          @aws_session_token     = options[:aws_session_token]
-          @aws_credentials_expire_at = options[:aws_credentials_expire_at]
+          options.each_pair do |key, val|
+            instance_variable_set("@#{key}", val.respond_to?(:call) ? val.call : val) 
+          end
 
           @signer = Fog::AWS::SignatureV4.new( @aws_access_key_id, @aws_secret_access_key, @region, 's3')
         end
