@@ -425,7 +425,7 @@ module Fog
           @path_style = options[:path_style]  || false
 
           if @endpoint = options[:endpoint]
-            endpoint = URI.parse(@endpoint)
+            endpoint = @endpoint.respond_to?(:call) ? URI.parse(@endpoint.call) : URI.parse(@endpoint)
             @host = endpoint.host
             @scheme = endpoint.scheme
             @port = endpoint.port
@@ -449,7 +449,6 @@ module Fog
           options.each_pair do |key, val|
             instance_variable_set("@#{key}", val.respond_to?(:call) ? val.call : val) 
           end
-
           @signer = Fog::AWS::SignatureV4.new( @aws_access_key_id, @aws_secret_access_key, @region, 's3')
         end
 
